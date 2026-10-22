@@ -24,8 +24,9 @@ export function modelMeta(model) {
   return { id, palette: id, logo: family?.logo ?? null, color: palettes[id] };
 }
 
+const assetVersion = new URL(import.meta.url).searchParams.get('v');
 export function logoPath(meta) {
-  return meta.logo ? `./assets/brands/${meta.logo}.svg` : null;
+  return meta.logo ? `./assets/brands/${meta.logo}.svg${assetVersion ? `?v=${encodeURIComponent(assetVersion)}` : ''}` : null;
 }
 
 export function paletteCSS() {

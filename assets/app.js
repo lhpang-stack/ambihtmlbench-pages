@@ -1,70 +1,87 @@
-import { loadLeaderboard } from './data-source.js';
-import { renderRows, presentation } from './view.js';
-import { renderChart } from './chart.js';
+import { loadLeaderboard } from './data-source.js?v=48e2a8e56471';
+import { renderBoardViews, formatConfidence } from './board.js?v=48e2a8e56471';
+import { chartData, presentation } from './view.js?v=48e2a8e56471';
 
-const board = document.querySelector('[data-leaderboard]');
-const status = document.querySelector('[data-refresh-status]');
-const retry = document.querySelector('[data-retry]');
-const viewInputs = [...document.querySelectorAll('input[name="view"]')];
-let request;
-let currentSnapshot;
-try {
-  currentSnapshot = JSON.stringify(JSON.parse(document.querySelector('#leaderboard-snapshot')?.textContent ?? 'null'));
-} catch { /* A damaged embedded snapshot does not block a validated refresh. */ }
+const boards = [...document.querySelectorAll('[data-leaderboard]')];
+const views = ['bars', 'table', 'line', 'dots'];
 
-function readView() {
-  const view = location.hash.slice(1);
-  const input = viewInputs.find((element) => element.value === view)
-    ?? viewInputs.find((element) => element.defaultChecked);
-  if (input) input.checked = true;
-}
-viewInputs.forEach((input) => input.addEventListener('change', () => {
-  if (input.checked) history.replaceState(null, '', `#${input.value}`);
-}));
-window.addEventListener('hashchange', readView);
-readView();
-
-function render(data) {
-  const nextSnapshot = JSON.stringify(data);
-  if (nextSnapshot === currentSnapshot) return;
-  // Generate all views before replacing any DOM. A failure retains every view.
-  const rows = renderRows(data);
-  const charts = Object.fromEntries(['bars', 'line', 'dots'].map((kind) => [kind, renderChart(data, kind)]));
-  const text = presentation(data);
-  board.querySelector('tbody').innerHTML = rows;
-  for (const [kind, html] of Object.entries(charts)) board.querySelector(`[data-chart="${kind}"]`).innerHTML = html;
-  const direction = board.querySelector('[data-field="direction"]');
-  direction.textContent = text.direction;
-  direction.setAttribute('aria-label', text.directionText);
-  currentSnapshot = nextSnapshot;
-}
-
-async function refresh() {
-  if (!board || request) return;
-  request = new AbortController();
-  const timer = setTimeout(() => request?.abort(), 10000);
-  retry.hidden = true;
-  status.textContent = '';
-  board.setAttribute('aria-busy', 'true');
-  try {
-    render(await loadLeaderboard(board.dataset.source, { signal: request.signal }));
-  } catch {
-    status.textContent = 'Unable to update results.';
-    retry.hidden = false;
-  } finally {
-    clearTimeout(timer);
-    request = null;
-    board.setAttribute('aria-busy', 'false');
+function readViews() {
+  const hash = location.hash.slice(1);
+  const selected = new URLSearchParams(hash);
+  for (const board of boards) {
+    const value = views.includes(hash) ? hash : selected.get(board.dataset.board);
+    const inputs = [...board.querySelectorAll('input[type="radio"]')];
+    const input = inputs.find(element => element.value === value) ?? inputs.find(element => element.defaultChecked);
+    if (input) input.checked = true;
   }
 }
-retry?.addEventListener('click', refresh);
-function highlight(index) {
-  board.querySelectorAll('[data-model-index]').forEach((element) => {
-    element.classList.toggle('is-highlighted', element.dataset.modelIndex === index);
-  });
+function writeViews() {
+  const selected = boards.map(board => [board.dataset.board, board.querySelector('input:checked').value]);
+  const hash = new Set(selected.map(([, value]) => value)).size === 1
+    ? selected[0][1] : new URLSearchParams(selected).toString();
+  history.replaceState(null, '', `#${hash}`);
 }
-board?.addEventListener('pointerover', (event) => highlight(event.target.closest('[data-model-index]')?.dataset.modelIndex));
-board?.addEventListener('pointerleave', () => highlight(null));
-board?.addEventListener('focusin', (event) => highlight(event.target.closest('[data-model-index]')?.dataset.modelIndex));
-board?.addEventListener('focusout', () => highlight(null));
-if (board) refresh();
+window.addEventListener('hashchange', readViews);
+readViews();
+
+for (const board of boards) {
+  const status = board.querySelector('[data-refresh-status]');
+  const retry = board.querySelector('[data-retry]');
+  let request;
+  let currentSnapshot;
+  try {
+    currentSnapshot = JSON.stringify(JSON.parse(board.querySelector('[data-board-snapshot]')?.textContent ?? 'null'));
+  } catch { /* A damaged embedded snapshot does not block a validated refresh. */ }
+
+  board.querySelectorAll('input[type="radio"]').forEach(input => input.addEventListener('change', writeViews));
+  function render(data) {
+    const nextSnapshot = JSON.stringify(data);
+    if (nextSnapshot === currentSnapshot) return;
+    // Prepare every view before touching this board; the other board is independent.
+    const { rows, charts } = renderBoardViews(data, board.dataset.board);
+    const text = presentation(data);
+    board.querySelector('tbody').innerHTML = rows;
+    for (const [kind, html] of Object.entries(charts)) board.querySelector(`[data-chart="${kind}"]`).innerHTML = html;
+    const direction = board.querySelector('[data-field="direction"]');
+    direction.textContent = text.direction;
+    direction.setAttribute('aria-label', text.directionText);
+    const metric = chartData(data).score;
+    board.querySelector('[data-field="chart-label"]').textContent = `${metric.sourceLabel}${metric.unit ? ` (${metric.unit})` : ''}`;
+    const chartDirection = board.querySelector('[data-field="chart-direction"]');
+    const chartText = presentation(chartData(data));
+    chartDirection.textContent = chartText.direction;
+    chartDirection.setAttribute('aria-label', chartText.directionText);
+    const confidence = board.querySelector('[data-field="confidence-label"]');
+    if (confidence) confidence.textContent = `(${formatConfidence(data.score.confidenceLevel)}% CI)`;
+    currentSnapshot = nextSnapshot;
+  }
+  async function refresh() {
+    if (request) return;
+    request = new AbortController();
+    const timer = setTimeout(() => request?.abort(), 10000);
+    retry.hidden = true;
+    status.textContent = '';
+    board.setAttribute('aria-busy', 'true');
+    try {
+      render(await loadLeaderboard(board.dataset.source, { signal: request.signal, kind: board.dataset.kind }));
+    } catch {
+      status.textContent = 'Unable to update results.';
+      retry.hidden = false;
+    } finally {
+      clearTimeout(timer);
+      request = null;
+      board.setAttribute('aria-busy', 'false');
+    }
+  }
+  retry.addEventListener('click', refresh);
+  function highlight(index) {
+    board.querySelectorAll('[data-model-index]').forEach(element => {
+      element.classList.toggle('is-highlighted', element.dataset.modelIndex === index);
+    });
+  }
+  board.addEventListener('pointerover', event => highlight(event.target.closest('[data-model-index]')?.dataset.modelIndex));
+  board.addEventListener('pointerleave', () => highlight(null));
+  board.addEventListener('focusin', event => highlight(event.target.closest('[data-model-index]')?.dataset.modelIndex));
+  board.addEventListener('focusout', () => highlight(null));
+  refresh();
+}

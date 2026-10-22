@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "status": "preview",
+  "updatedAt": null,
+  "score": {
+    "sourceLabel": "BT score",
+    "direction": "higher",
+    "precision": 2,
+    "confidenceLevel": 0.95
+  },
+  "rows": [
+    {
+      "rank": 1,
+      "model": "GPT-5.6-Sol",
+      "score": 154.7,
+      "confidenceInterval": [
+        140.59,
+        168.82
+      ],
+      "preferenceRate": 71.64,
+      "rankInterval": [
+        1,
+        1
+      ]
+    },
+    {
+      "rank": 2,
+      "model": "GPT-5.6-Terra",
+      "score": 102.87,
+      "confidenceInterval": [
+        90.18,
+        116.25
+      ],
+      "preferenceRate": 64.76,
+      "rankInterval": [
+        2,
+        3
+      ]
+    },
+    {
+      "rank": 3,
+      "model": "Gemini 3.1 Pro Preview",
+      "score": 100.86,
+      "confidenceInterval": [
+        89.88,
+        112.74
+      ],
+      "preferenceRate": 64.49,
+      "rankInterval": [
+        2,
+        3
+      ]
+    },
+    {
+      "rank": 4,
+      "model": "Qwen3.7-Plus",
+      "score": 56.04,
+      "confidenceInterval": [
+        45.63,
+        66.45
+      ],
+      "preferenceRate": 58.12,
+      "rankInterval": [
+        4,
+        4
+      ]
+    },
+    {
+      "rank": 5,
+      "model": "Kimi-K3",
+      "score": 9.62,
+      "confidenceInterval": [
+        -2.16,
+        21.71
+      ],
+      "preferenceRate": 51.32,
+      "rankInterval": [
+        5,
+        6
+      ]
+    },
+    {
+      "rank": 6,
+      "model": "Claude Opus 5",
+      "score": -2.47,
+      "confidenceInterval": [
+        -14.01,
+        8.96
+      ],
+      "preferenceRate": 49.51,
+      "rankInterval": [
+        5,
+        6
+      ]
+    },
+    {
+      "rank": 7,
+      "model": "Grok-4.5",
+      "score": -55.49,
+      "confidenceInterval": [
+        -68.68,
+        -43.23
+      ],
+      "preferenceRate": 41.77,
+      "rankInterval": [
+        7,
+        8
+      ]
+    },
+    {
+      "rank": 8,
+      "model": "Claude Sonnet 5",
+      "score": -58.17,
+      "confidenceInterval": [
+        -68.74,
+        -47.74
+      ],
+      "preferenceRate": 41.38,
+      "rankInterval": [
+        7,
+        8
+      ]
+    },
+    {
+      "rank": 9,
+      "model": "GLM-5V-Turbo",
+      "score": -117.28,
+      "confidenceInterval": [
+        -129.38,
+        -106.41
+      ],
+      "preferenceRate": 33.12,
+      "rankInterval": [
+        9,
+        9
+      ]
+    },
+    {
+      "rank": 10,
+      "model": "ERNIE-5.0",
+      "score": -190.68,
+      "confidenceInterval": [
+        -203.33,
+        -178.59
+      ],
+      "preferenceRate": 23.88,
+      "rankInterval": [
+        10,
+        10
+      ]
+    }
+  ],
+  "kind": "subjective",
+  "method": {
+    "comparisons": 10000,
+    "comparisonsPerModel": 2000,
+    "bootstrapReplicates": 2000
+  }
+}
