@@ -1,5 +1,5 @@
-import { escapeHTML, renderRows, chartData, presentation } from './view.js?v=48e2a8e56471';
-import { renderChart } from './chart.js?v=48e2a8e56471';
+import { escapeHTML, renderRows, chartData, presentation } from './view.js?v=e5171ca22604';
+import { renderChart } from './chart.js?v=e5171ca22604';
 
 const views = {
   bars: ['Bars', '<path d="M3 16.5h14M4.5 13V5M10 13V3M15.5 13V8"/>'],

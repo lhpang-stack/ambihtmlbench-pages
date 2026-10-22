@@ -1,5 +1,5 @@
-import { escapeHTML, formatScore, modelIcon } from './view.js?v=48e2a8e56471';
-import { modelMeta } from './model-meta.js?v=48e2a8e56471';
+import { escapeHTML, formatScore, modelIcon } from './view.js?v=e5171ca22604';
+import { modelMeta } from './model-meta.js?v=e5171ca22604';
 
 // Zero is always included. A normalized domain avoids overflow for finite scores
 // at either numeric extreme; it also supports negative scores and all-zero data.
@@ -46,7 +46,8 @@ function chartValue(data, value) { return `${formatScore(value, data.score.preci
 
 function chartGeometry(data, compact) {
   const width = Math.max(compact ? 600 : 1000, data.rows.length * (compact ? 54 : 96) + 48);
-  const left = 40, right = 8, top = 32, height = 220;
+  // Match the HTML label grid's 4% / .8% gutters at every canvas width.
+  const left = width * .04, right = width * .008, top = 32, height = 220;
   const scale = plotScale(data);
   const column = (width - left - right) / data.rows.length;
   return { width, left, right, top, height, scale, x: (index) => left + column * (index + .5), y: (score) => top + scale.position(score) * height };

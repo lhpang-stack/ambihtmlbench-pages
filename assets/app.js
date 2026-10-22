@@ -1,6 +1,6 @@
-import { loadLeaderboard } from './data-source.js?v=48e2a8e56471';
-import { renderBoardViews, formatConfidence } from './board.js?v=48e2a8e56471';
-import { chartData, presentation } from './view.js?v=48e2a8e56471';
+import { loadLeaderboard } from './data-source.js?v=e5171ca22604';
+import { renderBoardViews, formatConfidence } from './board.js?v=e5171ca22604';
+import { chartData, presentation } from './view.js?v=e5171ca22604';
 
 const boards = [...document.querySelectorAll('[data-leaderboard]')];
 const views = ['bars', 'table', 'line', 'dots'];

@@ -1,4 +1,4 @@
-import { modelMeta, logoPath } from './model-meta.js?v=48e2a8e56471';
+import { modelMeta, logoPath } from './model-meta.js?v=e5171ca22604';
 
 export function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({
