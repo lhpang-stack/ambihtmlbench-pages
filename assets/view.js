@@ -1,4 +1,4 @@
-import { modelMeta, logoPath } from './model-meta.js?v=e5171ca22604';
+import { modelMeta, logoPath } from './model-meta.js?v=adff390298ae';
 
 export function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -30,14 +30,7 @@ export function renderRows(data) {
   }).join('\n');
 }
 
-/** Keep BT ranking/table values separate from the percentage shown in charts. */
-export function chartData(data) {
-  return data.kind === 'subjective' ? {
-    ...data,
-    score: { sourceLabel: 'Soft preference score rate', direction: 'higher', precision: 2, unit: '%' },
-    rows: data.rows.map(row => ({ rank: row.rank, model: row.model, score: row.preferenceRate })),
-  } : data;
-}
+export function formatConfidence(level) { return Number((level * 100).toFixed(2)); }
 
 export function presentation(data) {
   return {
