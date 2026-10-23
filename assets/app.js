@@ -1,5 +1,5 @@
-import { loadLeaderboard } from './data-source.js?v=7069960af494';
-import { renderRows, presentation, formatConfidence } from './view.js?v=7069960af494';
+import { loadLeaderboard } from './data-source.js?v=ea4eb68a797a';
+import { renderRows, presentation, formatConfidence } from './view.js?v=ea4eb68a797a';
 
 // Old chart links continue to lead to the two tables after the redesign.
 const legacy = location.hash.slice(1);
