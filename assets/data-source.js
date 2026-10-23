@@ -1,4 +1,4 @@
-import { validateLeaderboard } from './leaderboard.js?v=adff390298ae';
+import { validateLeaderboard } from './leaderboard.js?v=7069960af494';
 
 /** Adapt a future API response here, then validate before touching the page. */
 const identity = (value) => value;

@@ -1,5 +1,5 @@
-import { loadLeaderboard } from './data-source.js?v=adff390298ae';
-import { renderRows, presentation, formatConfidence } from './view.js?v=adff390298ae';
+import { loadLeaderboard } from './data-source.js?v=7069960af494';
+import { renderRows, presentation, formatConfidence } from './view.js?v=7069960af494';
 
 // Old chart links continue to lead to the two tables after the redesign.
 const legacy = location.hash.slice(1);
@@ -32,6 +32,7 @@ for (const board of document.querySelectorAll('[data-leaderboard]')) {
         const rows = renderRows(data);
         const text = presentation(data);
         board.querySelector('tbody').innerHTML = rows;
+        board.querySelector('[data-field="model-count"]').textContent = `${data.rows.length} models`;
         for (const direction of board.querySelectorAll('[data-field="direction"], [data-field="metric-direction"]')) {
           direction.textContent = text.direction;
           direction.setAttribute('aria-label', text.directionText);
